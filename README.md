@@ -1,23 +1,54 @@
 # spring-streaming-poc
 
-This project uses [Gradle](https://gradle.org/).
-To build and run the application, use the *Gradle* tool window by clicking the Gradle icon in the right-hand toolbar,
-or run it directly from the terminal:
+Showcase of streaming files over spring boot backend using blocking and non-blocking techniques.
 
-* Run `./gradlew run` to build and run the application.
-* Run `./gradlew build` to only build the application.
-* Run `./gradlew check` to run all checks, including tests.
-* Run `./gradlew clean` to clean all build outputs.
+The project contains 4 flavours of the application providing the file API
+* Netty blocking
+* Netty non-blocking
+* Tomcat blocking
+* Tomcat streaming
 
-Note the usage of the Gradle Wrapper (`./gradlew`).
-This is the suggested way to use Gradle in production projects.
+## The naive approach - Blocking
+```mermaid
+sequenceDiagram
+    participant jmeter
+    participant application
+    participant ngnix
+    jmeter->>application: request file
+    application->>ngnix: request file
+    ngnix->>application: receive all file data
+    application->>application: buffer file in memory
+    application->>jmeter: write headers
+    application->>jmeter: write file data
+```
+## The Non-blocking/streaming approach
+```mermaid
+sequenceDiagram
+    participant jmeter
+    participant application
+    participant ngnix
+    jmeter->>application: request file
+    application->>ngnix: request file
+    application->>jmeter: write headers
+    ngnix->>application: receive data block
+    application->>jmeter: write data block
+    ngnix->>application: receive data block
+    application->>jmeter: write data block
+    ngnix->>application: end of stream
+    application->>jmeter: end of stream
+```
 
-[Learn more about the Gradle Wrapper](https://docs.gradle.org/current/userguide/gradle_wrapper.html).
+## Requirements 
+* [OpenJDK 21](https://adoptium.net/temurin/releases/)
+* [Docker](https://www.docker.com/)
+* [JMeter](https://jmeter.apache.org/)
 
-[Learn more about Gradle tasks](https://docs.gradle.org/current/userguide/command_line_interface.html#common_tasks).
+## How to run
+1. Build the bootJars `./gradlew build` 
+2. Package the images `docker compose build`
+3. Run the stack `docker compose up`
+4. Put some load on it `jmeter -n -t jmeter/Streaming_PDF.jmx -l results/result.jtl -e -o results`
+5. Inspect the HTML report / view docker logs to see any errors
 
-This project follows the suggested multi-module setup and consists of the `app` and `utils` subprojects.
-The shared build logic was extracted to a convention plugin located in `buildSrc`.
-
-This project uses a version catalog (see `gradle/libs.versions.toml`) to declare and version dependencies
-and both a build cache and a configuration cache (see `gradle.properties`).
+## Pitfalls
+* JMeter out of memory, check your available memory to JMeter in "apache-jmeter-{version}/bin/jmeter", update the following line by adding a larger max heap space `: "${HEAP:="-Xms1g -Xmx10g -XX:MaxMetaspaceSize=256m"}"`

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SonarLintProjectSettings">
+    <option name="moduleMapping">
+      <map>
+        <entry key="netty-app" value="untitled" />
+        <entry key="spring-streaming-poc.netty-streaming-app" value="spring-streaming-poc.netty-app" />
+        <entry key="spring-streaming-poc.tomcat-streaming-app" value="spring-streaming-poc.tomcat-app" />
+      </map>
+    </option>
+  </component>
+</project>

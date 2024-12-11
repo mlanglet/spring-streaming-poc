@@ -1,0 +1,13 @@
+server:
+  port: 8081
+
+logging:
+  level:
+    root: info
+
+spring:
+  main:
+    banner-mode: off
+  threads:
+    virtual:
+      enabled: true

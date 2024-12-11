@@ -1,0 +1,56 @@
+services:
+  netty-streaming-app:
+    build:
+      dockerfile: netty-streaming-app/Dockerfile
+      context: ./
+    image: netty-streaming-app:latest
+    ports:
+      - "8081:8081"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 200M
+  netty-blocking-app:
+    build:
+      dockerfile: netty-blocking-app/Dockerfile
+      context: ./
+    image: netty-blocking-app:latest
+    ports:
+      - "8082:8082"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 200M
+  tomcat-streaming-app:
+    build:
+      dockerfile: tomcat-streaming-app/Dockerfile
+      context: ./
+    image: tomcat-streaming-app:latest
+    ports:
+      - "8083:8083"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 200M
+  tomcat-blocking-app:
+    build:
+      dockerfile: tomcat-blocking-app/Dockerfile
+      context: ./
+    image: tomcat-blocking-app:latest
+    ports:
+      - "8084:8084"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 200M
+  file-server:
+    build:
+      dockerfile: file-server/Dockerfile
+      context: ./
+    image: file-server:latest
+    ports:
+      - "8080:80"
